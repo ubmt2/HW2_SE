@@ -65,3 +65,45 @@ class Recipe:
             output += str(i) + "\n"
 
         return output
+
+
+class ShoppingList:
+    def __init__(self, items: List[tuple[Ingredient, str]]) -> None:
+        self._items = items
+
+    def add_recipe(self, recipe: Recipe, portions: float) -> None:
+        if not Recipe.is_valid_ratio(portions):
+            raise ValueError("Количество порций должно быть положительным")
+
+        for i in recipe.scale(portions):
+            self._items.append((i, recipe.title))
+
+    def remove_recipe(self, title: str) -> None:
+        self._items = list(filter(lambda x: x[1] != title, self._items))
+
+    def get_list(self) -> dict:
+        dictOfIngredients = dict()
+
+        for ing, recipe in self._items:
+            key = (ing.name, ing.unit)
+            if key in dictOfIngredients:
+                dictOfIngredients[key] += ing.quantity
+            else:
+                dictOfIngredients[key] = ing.quantity
+
+        output = []
+
+        for name, unit, quantity in dictOfIngredients.items():
+            output.append(Ingredient(name, quantity, unit))
+
+        output.sort(key=lambda x: x.name)
+
+        return output
+
+    def __add__(self, other):
+        if not isinstance(other, ShoppingList):
+            raise ValueError("Складывать можно только списки покупок")
+        newList = self._items
+        newList.extend(other._item)
+
+        return ShoppingList(newList)
