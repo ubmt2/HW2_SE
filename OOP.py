@@ -107,3 +107,19 @@ class ShoppingList:
         newList.extend(other._item)
 
         return ShoppingList(newList)
+
+
+class DiataryRecipe(Recipe):
+    def __init__(self, title: str, diet_type: str, ingredients=[] | List[Ingredient]) -> None:
+        super().__init__(title, ingredients)
+        self.diet_type = diet_type
+
+    def scale(self, ratio: float):
+        newList = self.super().scale(ratio).ingredients
+
+        return DiataryRecipe(self.title, self.diet_type, newList)
+
+    def __str__(self) -> str:
+        output = super().__str__()
+
+        return f"[{self.diet_type}] {output}"
