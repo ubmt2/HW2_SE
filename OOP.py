@@ -75,13 +75,13 @@ class ShoppingList:
         if not Recipe.is_valid_ratio(portions):
             raise ValueError("Количество порций должно быть положительным")
 
-        for i in recipe.scale(portions):
+        for i in recipe.scale(portions).ingredients:
             self._items.append((i, recipe.title))
 
     def remove_recipe(self, title: str) -> None:
         self._items = list(filter(lambda x: x[1] != title, self._items))
 
-    def get_list(self) -> dict:
+    def get_list(self) -> List:
         dictOfIngredients = dict()
 
         for ing, recipe in self._items:
@@ -93,8 +93,8 @@ class ShoppingList:
 
         output = []
 
-        for name, unit, quantity in dictOfIngredients.items():
-            output.append(Ingredient(name, quantity, unit))
+        for key, quantity in dictOfIngredients.items():
+            output.append(Ingredient(key[0], quantity, key[1]))
 
         output.sort(key=lambda x: x.name)
 
@@ -104,7 +104,7 @@ class ShoppingList:
         if not isinstance(other, ShoppingList):
             raise ValueError("Складывать можно только списки покупок")
         newList = self._items
-        newList.extend(other._item)
+        newList.extend(other._items)
 
         return ShoppingList(newList)
 
@@ -115,7 +115,7 @@ class DiataryRecipe(Recipe):
         self.diet_type = diet_type
 
     def scale(self, ratio: float):
-        newList = self.super().scale(ratio).ingredients
+        newList = super().scale(ratio).ingredients
 
         return DiataryRecipe(self.title, self.diet_type, newList)
 
