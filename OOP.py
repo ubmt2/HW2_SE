@@ -4,6 +4,7 @@ class Ingredient:
         self.quantity = quantity
         self.unit = unit
 
+
     @property
     def quantity(self) -> float:
         return self._quantity
